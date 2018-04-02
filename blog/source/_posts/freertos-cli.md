@@ -27,8 +27,8 @@ brief   :
 在系统调试过此中，总是会有某些参数的临时修改，或者有时候调试需要临时打印一些信息，如果都需要重新修改代码、编译、下载这样一个过程就会显得十分麻烦。
 而通过CLI接口，就可以通过调用程序中的接口去修改一些参数，或者临时打开一些预置的调试打印，避免反复修改程序的麻烦和偶尔粗心大意造成的修改不全面。
 当然还可以通过一些控制接口，直接实现一些控制，方便调试。总之而言，CLI很大程度方便了程序调试过程。
-FreeRTOS系统后续不做介绍，作者只是选择了一个系统平台来实现和展示CLI工具。只需要简单移植，就可以在其他系统中使用。
-
+FreeRTOS系统后续不做介绍，作者只是选择了一个系统平台来实现和展示CLI工具。
+更新了基于UcOSIII的CLI(2018.4.2, STM32F4), 队列、信号量的实现方式不同于FreeRTOS，所以差异还是比较明显，可以一起看看。
 <!-- more -->
 
 ---
@@ -49,6 +49,12 @@ FreeRTOS官网提供CLI的例程，作者自写CLI之前很认真的阅读过源
         if you need to add one bit, please reduce one bit on 'OTHER'
 
     3、about submenu, please refer to the template in the file cli_register.c
+
+    4、The critical area problem is not considered in the program, and it is not recommended to use in interrupts, and high frequency is not recommended.
+
+    5、Provide the program under the ucos system.
+
+    6、Use caution if you don't do a lot of testing.
 ```
 
 [源码链接](https://github.com/jungleeee/FreeRTOS-CLI)
