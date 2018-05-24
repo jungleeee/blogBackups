@@ -26,10 +26,10 @@ brief   :
 
 ![1_sysClock](/picture/img/stm32-clock/1_sysClock.png)
 
-这里简单介绍上图。
+这里简单介绍上图(从左到右)：
 红色外框：从这里选中HSE(外部时钟)，并配置外部时钟的频率。(我这里外部晶振使用的是8MHz，内部时钟部分自行参考)
 黑色外框：M N P参数，常说的倍频部分。
-黄色外框：通过设置倍频系数，得到的系统最大频率。(系统最大频率，请参考计数文档)
+黄色外框：通过设置倍频系数，得到的系统频率。(系统最大频率，请参考计数文档)
 绿色外框：AHB 分频得到HCLK频率。
 蓝色外框：下面两个框分频后得到APB1和APB2的时钟。
 最后面是到各个外设的工作频率。
@@ -38,7 +38,28 @@ brief   :
 ### 时钟配置
 时钟配置其实最主要的就是设置倍频和分频的系数，很简单。这里就这几个系数在什么位置说明一下，请打开system_stm32f4xx.c文件。
 这里使用的是F4的库，STM32F4xx_DSP_StdPeriph_Lib_V1.8.0，芯片f405/f407，所以在Keil中定义了STM32F40_41xxx(根据此宏确定该系数的唯一位置)，下面程序是截取system_stm32f4xx.c文件，需要修改的位置在程序中有说明，请仔细查看这一部分。
-首先时倍频的系数设置：
+首先我们需要修改外部时钟的频率，改为外部使用的晶振频率，是在系统文件stm32f4xx.h中：
+```
+    /**
+     * @brief In the following line adjust the value of External High Speed oscillator (HSE)
+       used in your application
+
+       Tip: To avoid modifying this file each time you need to use different HSE, you
+            can define the HSE value in your toolchain compiler preprocessor.
+      */
+    #if defined(STM32F40_41xxx) || defined(STM32F427_437xx)  || defined(STM32F429_439xx) || defined(STM32F401xx) || \
+        defined(STM32F410xx) || defined(STM32F411xE) || defined(STM32F469_479xx)
+     #if !defined  (HSE_VALUE) /* 修改外部时钟频率，默认25MHz，25000000，我使用8MHz， */
+      #define HSE_VALUE    ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
+     #endif /* HSE_VALUE */
+    #elif defined (STM32F412xG) || defined(STM32F413_423xx) || defined(STM32F446xx)
+     #if !defined  (HSE_VALUE)
+      #define HSE_VALUE    ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
+     #endif /* HSE_VALUE */
+    #endif /* STM32F40_41xxx || STM32F427_437xx || STM32F429_439xx || STM32F401xx || STM32F411xE || STM32F469_479xx */
+```
+
+然后倍频的系数设置：
 ```
     /************************* PLL Parameters *************************************/
     #if defined(STM32F40_41xxx) || defined(STM32F427_437xx) || defined(STM32F429_439xx) || defined(STM32F401xx) || defined(STM32F469_479xx)
